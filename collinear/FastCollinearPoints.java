@@ -36,27 +36,40 @@ public class FastCollinearPoints {
         double tmpSlope;
         double stdSlope;
         int numOfPoints = 0;
+        boolean useless = false;
         ArrayList<LineSegment> tmpList = new ArrayList<LineSegment>();
 
         for (int p = 0; p < points.length - 3; p++) {
             points2 = points.clone();
             Arrays.sort(points2, points2[p].slopeOrder());
+
             numOfPoints = 0;
-            stdSlope = points2[0].slopeTo(points2[1]);
+
             for (int q = 1; q < points.length; q++) {
-                if (q == points.length - 1 && numOfPoints > 2) {
-                    tmpList.add(new LineSegment(points[p], points2[q - 1]));
-                    break;
+
+                if (points2[0].compareTo(points2[q]) == 1) {
+                    tmpSlope = points2[0].slopeTo(points2[q]);
+                    useless = true;
+                    numOfPoints = 0;
                 }
-                tmpSlope = points2[0].slopeTo(points2[q]);
-                if (tmpSlope == stdSlope) {
-                    numOfPoints += 1;
-                }
-                else {
-                    if (numOfPoints > 2)
-                        tmpList.add(new LineSegment(points2[0], points2[q - 1]));
-                    stdSlope = tmpSlope;
-                    numOfPoints = 1;
+                else if (points2[0].compareTo(points2[q]) == -1) {
+                    //나가리인경우
+                    if (useless == true && points2[0].slopeTo(points2[q]) == points2[0]
+                            .slopeTo(points2[q - 1])) {
+
+                    }
+                    else if (points2[0].slopeTo(points2[q]) != points2[0].slopeTo(points2[q - 1])) {
+                        useless = false;
+                        numOfPoints = 1;
+                    }
+                    else if (points2[0].slopeTo(points2[q]) == points2[0].slopeTo(points2[q - 1])) {
+                        numOfPoints += 1;
+                    }
+                    if ((q == points.length - 1 && numOfPoints >= 3) || (q != points.length - 1 &&
+                            points2[0].slopeTo(points2[q]) != points2[0].slopeTo(points2[q + 1])
+                            && numOfPoints >= 3)) {
+                        tmpList.add(new LineSegment(points2[0], points2[q]));
+                    }
                 }
             }
         }
