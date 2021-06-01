@@ -1,7 +1,7 @@
 /* *****************************************************************************
- *  Name:
- *  Date:
- *  Description:
+ *  Name:ELO
+ *  Date:2021-06-01
+ *  Description:BruteCollinearPoints(100/100)
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.In;
@@ -12,18 +12,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BruteCollinearPoints {
-    private LineSegment[] lignSegments;
+    private final LineSegment[] lignSegments;
 
     public BruteCollinearPoints(Point[] points) {
-
+        //When Points is null Array
         if (points == null)
             throw new IllegalArgumentException();
 
+        //When Points[i] is null
         for (int i = 0; i < points.length; i++) {
             if (points[i] == null)
                 throw new IllegalArgumentException();
         }
 
+        //When Points[i] has same points in Array n^2
         for (int i = 0; i < points.length - 1; i++) {
             for (int j = i + 1; j < points.length; j++) {
                 if (points[i].compareTo(points[j]) == 0)
@@ -31,17 +33,23 @@ public class BruteCollinearPoints {
             }
         }
 
-        Arrays.sort(points);
+        Point[] pointsSorted = points.clone();
 
+        Arrays.sort(pointsSorted);
+        //값이 몇개 나올지 모르니까 ArrayList로 짠다.
         ArrayList<LineSegment> tmpList = new ArrayList<LineSegment>();
 
-        for (int p = 0; p < points.length - 3; p++) {
-            for (int q = p + 1; q < points.length - 2; q++) {
-                for (int r = q + 1; r < points.length - 1; r++) {
-                    if (points[p].slopeTo(points[q]) == points[q].slopeTo(points[r])) {
-                        for (int s = r + 1; s < points.length; s++) {
-                            if (points[q].slopeTo(points[r]) == points[r].slopeTo(points[s])) {
-                                tmpList.add(new LineSegment(points[p], points[s]));
+        for (int p = 0; p < pointsSorted.length - 3; p++) {
+            for (int q = p + 1; q < pointsSorted.length - 2; q++) {
+                for (int r = q + 1; r < pointsSorted.length - 1; r++) {
+                    //p-q slope and  q-r slope is same
+                    if (pointsSorted[p].slopeTo(pointsSorted[q]) == pointsSorted[q]
+                            .slopeTo(pointsSorted[r])) {
+                        for (int s = r + 1; s < pointsSorted.length; s++) {
+                            //r-s slope and p-q, q-r slope is same
+                            if (pointsSorted[q].slopeTo(pointsSorted[r]) == pointsSorted[r]
+                                    .slopeTo(pointsSorted[s])) {
+                                tmpList.add(new LineSegment(pointsSorted[p], pointsSorted[s]));
                             }
                         }
                     }
@@ -56,7 +64,7 @@ public class BruteCollinearPoints {
     }      // the number of line segments
 
     public LineSegment[] segments() {
-        return lignSegments;
+        return lignSegments.clone();
     }
 
     public static void main(String[] args) {
